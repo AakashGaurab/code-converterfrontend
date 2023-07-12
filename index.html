@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        .render{
+            width: 80%;
+            margin: 3% auto 2% auto;
+            height: 40vh;
+            border: 2px solid black;
+        }
+        .buttons{
+            width: 80%;
+            margin: auto;
+            display: flex;
+            justify-content:space-evenly;
+            align-items: center;
+        }
+    </style>
+  </head>
+  <body>
+    
+    <textarea name="" id="code" rows="10" cols="150" style="display: block; margin: 3% auto 2% auto;" placeholder="Enter Your Code here"></textarea>
+
+    <div class="buttons">
+        <button type="button" class="btn btn-success" id="convert">Convert</button>
+        <div class="col-md-3">
+            <select class="form-select" id="lang" required>
+            <option selected disabled value="">Choose language</option>
+            <option value="Javascript">Javascript</option>
+            <option value="Java">Java</option>
+            <option value="python">Python</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-warning" id="explain">Explain</button>
+        <button type="button" class="btn btn-danger" id="debug">Debug</button>
+    </div>
+    <div class="render">
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        document.querySelector("#convert").addEventListener("click",async()=>{
+            let val = document.querySelector("#code").value;
+            
+            let lang = document.querySelector("#lang").value
+            if(val=="" || lang==""){
+                alert("Enter Code to Proceed");
+                return;
+            }
+
+            try {
+                let response = await fetch("https://openai-story-generation.onrender.com/convert",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({code:val,target_language:lang})
+                })
+
+                
+                let data = await response.json();
+                document.querySelector(".render").innerHTML= data.story;
+
+            } catch (error) {
+                document.querySelector(".render").innerHTML=error;
+            }
+
+        })
+
+        document.querySelector("#explain").addEventListener("click",async()=>{
+            let val = document.querySelector("#code").value;
+            
+            if(val==""){
+                alert("Enter Code to Proceed");
+                return;
+            }
+
+            try {
+                let response = await fetch("https://openai-story-generation.onrender.com/explain",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({code:val,target_language:lang})
+                })
+                
+                let data = await response.json();
+                console.log(data)
+                document.querySelector(".render").innerHTML= data.story;
+
+            } catch (error) {
+                document.querySelector(".render").innerHTML=error;
+            }
+
+            
+        })
+
+        document.querySelector("#debug").addEventListener("click",async()=>{
+            let val = document.querySelector("#code").value;
+            
+            if(val==""){
+                alert("Enter Code to Proceed");
+                return;
+            }
+
+            try {
+                let response = await fetch("https://openai-story-generation.onrender.com/debug",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({code:val,target_language:lang})
+                })
+                
+                let data = await response.json();
+                console.log(data)
+                document.querySelector(".render").innerHTML= data.story;
+
+            } catch (error) {
+                document.querySelector(".render").innerHTML=error;
+            }
+            
+        })
+    </script>
+  </body>
+</html>
